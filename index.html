@@ -103,42 +103,44 @@ section{padding:42px 5%}
     <p>Preencha os dados abaixo. Sua solicitação será encaminhada diretamente pelo WhatsApp.</p>
 
     <form id="formCotacao">
-      <label for="nome">Seu nome</label>
-      <input id="nome" required placeholder="Digite seu nome">
 
-      <label for="tipo">Qual plano procura?</label>
-      <select id="tipo" required>
-        <option value="">Selecione</option>
-        <option>Individual</option>
-        <option>Familiar</option>
-        <option>Empresarial</option>
-      </select>
+<form id="formCotacao">
+  <label for="nome">Nome</label>
+  <input id="nome" required placeholder="Digite seu nome">
 
-      <label for="vidas">Quantas pessoas serão incluídas?</label>
-      <select id="vidas" required>
-        <option value="">Selecione</option>
-        <option>1 pessoa</option>
-        <option>2 pessoas</option>
-        <option>3 pessoas</option>
-        <option>4 pessoas</option>
-        <option>5 pessoas</option>
-        <option>6 ou mais pessoas</option>
-      </select>
+  <label for="contratacao">Tipo de contratação</label>
+  <select id="contratacao" required>
+    <option value="">Selecione</option>
+    <option value="CPF - Pessoa Física">CPF - Pessoa Física</option>
+    <option value="CNPJ - Pessoa Jurídica">CNPJ - Pessoa Jurídica</option>
+  </select>
 
-      <label for="idades">Idades dos beneficiários</label>
-      <input id="idades" required placeholder="Ex.: 32, 28 e 5 anos">
+  <div id="campoCnpj" style="display:none">
+    <label for="tipoCnpj">Tipo de CNPJ</label>
+    <select id="tipoCnpj">
+      <option value="">Selecione</option>
+      <option>MEI</option>
+      <option>ME - Microempresa</option>
+      <option>EPP - Empresa de Pequeno Porte</option>
+      <option>LTDA</option>
+      <option>EI - Empresário Individual</option>
+      <option>Outro</option>
+    </select>
+  </div>
 
-      <label for="cidade">Cidade onde deseja utilizar o plano</label>
-      <input id="cidade" required value="Rio de Janeiro">
+  <label for="vidas">Quantas pessoas?</label>
+  <input id="vidas" type="number" min="1" required placeholder="Ex.: 3">
 
-      <label for="telefone">Seu telefone com DDD</label>
-      <input id="telefone" type="tel" required placeholder="(21) 99999-9999">
+  <label for="idades">Idade dos beneficiários</label>
+  <input id="idades" required placeholder="Ex.: 35, 28 e 6 anos">
 
-      <label for="observacoes">Informações adicionais (opcional)</label>
-      <textarea id="observacoes" rows="3" placeholder="Conte o que considera importante"></textarea>
+  <label for="hospital">Hospital de preferência</label>
+  <input id="hospital" placeholder="Digite o hospital desejado">
 
-      <button type="submit">Enviar cotação pelo WhatsApp</button>
-      <p class="note">Seus dados serão utilizados para responder à sua solicitação de cotação. Evite informar dados médicos ou documentos pessoais neste formulário.</p>
+  <button type="submit">Enviar cotação pelo WhatsApp</button>
+  <p class="note">Seus dados serão utilizados para responder à sua solicitação.</p>
+</form>
+
     </form>
   </div>
 </section>
@@ -175,6 +177,43 @@ Informações adicionais: ${observacoes}`;
 
   const url="https://wa.me/5521984425712?text="+encodeURIComponent(mensagem);
   window.open(url,"_blank");
+});
+</script>
+
+<script>
+const contratacao = document.getElementById("contratacao");
+const campoCnpj = document.getElementById("campoCnpj");
+const tipoCnpj = document.getElementById("tipoCnpj");
+
+contratacao.addEventListener("change", function() {
+  const selecionouCnpj = this.value.includes("CNPJ");
+  campoCnpj.style.display = selecionouCnpj ? "block" : "none";
+  tipoCnpj.required = selecionouCnpj;
+  if (!selecionouCnpj) tipoCnpj.value = "";
+});
+
+document.getElementById("formCotacao").addEventListener("submit", function(e) {
+  e.preventDefault();
+
+  const nome = document.getElementById("nome").value.trim();
+  const tipo = contratacao.value;
+  const empresa = tipoCnpj.value;
+  const vidas = document.getElementById("vidas").value;
+  const idades = document.getElementById("idades").value.trim();
+  const hospital = document.getElementById("hospital").value.trim();
+
+  const mensagem =
+`Olá, Sidney! Gostaria de solicitar uma cotação de plano de saúde.
+
+Nome: ${nome}
+Contratação: ${tipo}
+Tipo de CNPJ: ${tipo.includes("CNPJ") ? empresa : "Não se aplica"}
+Quantidade de pessoas: ${vidas}
+Idades: ${idades}
+Hospital de preferência: ${hospital || "Não informado"}`;
+
+  const url = "https://wa.me/5521984425712?text=" + encodeURIComponent(mensagem);
+  window.open(url, "_blank");
 });
 </script>
 
